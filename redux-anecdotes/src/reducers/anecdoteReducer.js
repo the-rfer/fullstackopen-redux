@@ -17,13 +17,30 @@ const asObject = (anecdote) => {
     };
 };
 
+export const incrementVotes = (id) => {
+    return { type: 'VOTE', payload: { id } };
+};
+
+export const createAnecdote = (content) => {
+    return { type: 'NEW_ANECDOTE', payload: { content } };
+};
+
 const initialState = anecdotesAtStart.map(asObject);
 
 const reducer = (state = initialState, action) => {
-    console.log('state now: ', state);
-    console.log('action', action);
-
-    // voting function
+    if (action.type === 'VOTE') {
+        return state.map((anecdote) =>
+            anecdote.id === action.payload.id
+                ? { ...anecdote, votes: anecdote.votes + 1 }
+                : anecdote
+        );
+    } else if (action.type === 'NEW_ANECDOTE') {
+        return state.concat({
+            content: action.payload.content,
+            id: getId(),
+            votes: 0,
+        });
+    }
 
     return state;
 };
