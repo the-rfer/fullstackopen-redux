@@ -1,19 +1,20 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { incrementVotes } from '../reducers/anecdoteReducer';
+import { incrementVotes } from '../reducers/anecdotesReducer';
 
 const AnecdoteList = () => {
-    const anecdotes = useSelector(({ anecdotes, filter }) => {
-        if (filter === 'ALL') {
-            return anecdotes.sort((a, b) => b.votes - a.votes);
-        }
-        return anecdotes.filter((a) =>
-            a.content.toLowerCase().includes(filter.toLowerCase())
-        );
-    });
+    const stateAnecdotes = useSelector((state) => state.anecdotes);
+    const filter = useSelector((state) => state.filter);
+
+    const filteredAnecdotes = stateAnecdotes.filter((anecdote) =>
+        anecdote.content.toLowerCase().includes(filter.toLowerCase())
+    );
+
+    const anecdotes = filteredAnecdotes.sort((a, b) => b.votes - a.votes);
+
     const dispatch = useDispatch();
 
     const vote = (id) => {
-        dispatch(incrementVotes(id));
+        dispatch(incrementVotes({ id: id }));
     };
 
     return (
