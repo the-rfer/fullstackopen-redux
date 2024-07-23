@@ -1,6 +1,6 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { createAnecdote } from './requests';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import NotificationContext from '../notificationContext';
 
 const AnecdoteForm = () => {
@@ -12,18 +12,30 @@ const AnecdoteForm = () => {
         mutationFn: createAnecdote,
         onSuccess: () =>
             queryClient.invalidateQueries({ queryKey: ['anecdotes'] }),
+        retry: false,
     });
 
     const onCreate = (event) => {
         event.preventDefault();
         const content = event.target.anecdote.value;
         event.target.anecdote.value = '';
-        notificationDispatch({
-            type: 'NOTIFICATION',
-            payload: `you created ${content}`,
-        });
         newAnecdoteMutation.mutate({ content, votes: 0 });
     };
+
+    useEffect(() => {
+        if (newAnecdoteMutation.status === 'success') {
+            notificationDispatch({
+                type: 'NOTIFICATION',
+                payload: `you created ${newAnecdoteMutation.variables.content}`,
+            });
+        }
+        if (newAnecdoteMutation.status === 'error') {
+            notificationDispatch({
+                type: 'NOTIFICATION',
+                payload: `the anecdote is too short`,
+            });
+        }
+    }, [newAnecdoteMutation.status]);
 
     return (
         <div>

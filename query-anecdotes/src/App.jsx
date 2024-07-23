@@ -3,7 +3,7 @@ import Notification from './components/Notification';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAnecdotes, updateVotes } from './components/requests';
 
-import NotificationContext from './NotificationContext';
+import NotificationContext from './notificationContext';
 import { useReducer } from 'react';
 
 const App = () => {
